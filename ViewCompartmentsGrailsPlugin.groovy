@@ -1,5 +1,5 @@
-import grails.plugin.viewcompartment.spring.ViewResolverPostProcessor
-import grails.plugin.viewcompartment.grails.CompartmentAwareViewResolver
+import grails.plugin.viewcompartment.ViewResolverPostProcessor
+import grails.plugin.viewcompartment.CompartmentAwareViewResolver
 
 class ViewCompartmentsGrailsPlugin {
 

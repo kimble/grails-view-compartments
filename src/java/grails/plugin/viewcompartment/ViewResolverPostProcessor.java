@@ -1,6 +1,4 @@
-package grails.plugin.viewcompartment.spring;
-
-import grails.plugin.viewcompartment.grails.CompartmentAwareViewResolver;
+package grails.plugin.viewcompartment;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

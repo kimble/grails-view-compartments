@@ -1,12 +1,12 @@
-package grails.plugin.viewcompartment.grails
+package grails.plugin.viewcompartment
 
-import org.codehaus.groovy.grails.commons.GrailsApplication;
-import org.codehaus.groovy.grails.commons.GrailsClass;
-import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.servlet.ViewResolver;
+import grails.plugin.spock.UnitSpec
 
-import grails.plugin.spock.UnitSpec;
+import org.codehaus.groovy.grails.commons.GrailsApplication
+import org.codehaus.groovy.grails.commons.GrailsClass
+import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest
+import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.servlet.ViewResolver
 
 /**
  * 

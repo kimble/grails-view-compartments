@@ -1,4 +1,4 @@
-package grails.plugin.viewcompartment.grails;
+package grails.plugin.viewcompartment;
 
 import java.util.HashMap;
 import java.util.Locale;
