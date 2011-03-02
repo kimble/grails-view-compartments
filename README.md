@@ -2,7 +2,7 @@ View compartments
 =================
 
 Add support for grouping views. 
-See [GRAILS-1243][http://jira.codehaus.org/browse/GRAILS-1243] for background information.
+See [GRAILS-1243](http://jira.codehaus.org/browse/GRAILS-1243) for background information.
 
 Example
 -------
