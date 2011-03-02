@@ -1,0 +1,17 @@
+web-app
+target
+build
+bin
+build.sh
+plugin.xml
+stacktrace.log
+*.tmproj
+*.iws
+*.zip
+*.sha1
+.gradle
+.DS_Store
+.classpath
+.project
+.settings
+.idea
