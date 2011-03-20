@@ -3,7 +3,7 @@ import grails.plugin.viewcompartment.CompartmentAwareViewResolver
 
 class ViewCompartmentsGrailsPlugin {
 
-    def version = "0.1"
+    def version = "0.4"
     def grailsVersion = "1.3.0 > *"
     def dependsOn = [:]
 
