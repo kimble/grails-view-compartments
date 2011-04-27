@@ -1,10 +1,9 @@
-import grails.plugin.viewcompartment.ViewResolverPostProcessor
 import grails.plugin.viewcompartment.CompartmentAwareViewResolver
 import org.codehaus.groovy.grails.commons.ControllerArtefactHandler
 
 class ViewCompartmentsGrailsPlugin {
 
-    def version = "0.4"
+    def version = "0.5"
     def grailsVersion = "1.3.0 > *"
     def dependsOn = [:]
 
@@ -25,11 +24,7 @@ class ViewCompartmentsGrailsPlugin {
 
     def doWithSpring = {
         compartmentAwareViewResolver(CompartmentAwareViewResolver) {
-            grailsApplication = ref("grailsApplication")
-        }
-        
-        viewResolverPostProcessor(ViewResolverPostProcessor) {
-            compartmentAwareViewResolver = ref("compartmentAwareViewResolver")
+            originalViewResolver = ref("jspViewResolver")
         }
     }
     

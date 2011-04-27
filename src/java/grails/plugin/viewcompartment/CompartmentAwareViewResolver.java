@@ -1,12 +1,13 @@
 package grails.plugin.viewcompartment;
 
-import java.util.Locale;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import groovy.lang.GroovyObject;
 
-import org.codehaus.groovy.grails.commons.ControllerArtefactHandler;
-import org.codehaus.groovy.grails.commons.GrailsApplication;
-import org.codehaus.groovy.grails.commons.GrailsClass;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.codehaus.groovy.grails.commons.GrailsClassUtils;
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest;
 import org.codehaus.groovy.grails.web.util.WebUtils;
@@ -27,60 +28,43 @@ public class CompartmentAwareViewResolver implements ViewResolver {
     public static final String COMPARTMENT = "compartment";
     public static final String NO_COMPARTMENT = "__no_compartment"; // ConcurrentHashMap dosen't like null
 
-    private ConcurrentMap<String, String> controllerCompartmentCache = new ConcurrentHashMap<String, String>();
+    private Map<GroovyObject, String> controllerCompartmentCache = new ConcurrentHashMap<GroovyObject, String>();
 
-    private GrailsApplication grailsApplication;
     private ViewResolver originalViewResolver;
 
     @Override
     public View resolveViewName(String viewName, Locale locale) throws Exception {
         String compartment = getCompartment(viewName);
-        viewName = getViewNameWithCompartment(viewName, compartment);
-        return originalViewResolver.resolveViewName(viewName, locale);
-    }
-
-    public void cleanCompartmentCache() {
-        log.debug("Clearing compartment cache");
-        controllerCompartmentCache.clear();
+        String resolvedViewName = getViewNameWithCompartment(viewName, compartment);
+        
+        return originalViewResolver.resolveViewName(resolvedViewName, locale);
     }
 
     protected String getCompartment(String viewName) {
         GrailsWebRequest webRequest = WebUtils.retrieveGrailsWebRequest();
-        String controllerName = webRequest.getControllerName();
-        return controllerName == null ? viewName : getAndUpdateCompartmentFromCache(controllerName);
+        HttpServletRequest request = webRequest.getCurrentRequest();
+        GroovyObject controller = webRequest.getAttributes().getController(request);
+        return controller == null ? viewName : getAndUpdateCompartmentFromCache(controller);
     }
 
-    protected String getAndUpdateCompartmentFromCache(String controllerName) {
+    protected String getAndUpdateCompartmentFromCache(GroovyObject controller) {
         String compartment = NO_COMPARTMENT;
-        if (controllerCompartmentCache.containsKey(controllerName)) {
-            compartment = controllerCompartmentCache.get(controllerName);
+        if (controllerCompartmentCache.containsKey(controller)) {
+            compartment = controllerCompartmentCache.get(controller);
         } else {
-            compartment = getCompartmentFromControllerName(controllerName);
-            controllerCompartmentCache.putIfAbsent(controllerName, compartment);
+            compartment = getCompartmentFromController(controller);
+            controllerCompartmentCache.put(controller, compartment);
         }
 
         return compartment;
     }
 
-    protected String getCompartmentFromControllerName(String controllerName) {
-        String type = ControllerArtefactHandler.TYPE;
-        String compartment = NO_COMPARTMENT;
-        GrailsClass controller =  grailsApplication.getArtefactByLogicalPropertyName(type, controllerName);
-        if (controller != null) {
-            Class<?> controllerClass = controller.getClazz();
-            compartment = getCompartmentFromControllerClass(controllerClass);
-        } else {
-            log.debug("Unable to find controller for {}", controllerName);
-        }
-
-        return compartment;
-    }
-
-    protected String getCompartmentFromControllerClass(Class<?> controllerClass) {
+    protected String getCompartmentFromController(GroovyObject controller) {
+        Class<?> controllerClass = controller.getClass();
         String compartment = (String) GrailsClassUtils.getStaticPropertyValue(controllerClass, COMPARTMENT);
         compartment = (compartment != null) ? compartment : NO_COMPARTMENT;
 
-        log.debug("Found compartment {} for controller {}", compartment, controllerClass.getName());
+        log.debug("Found compartment {} for controller {}", compartment, controllerClass.getSimpleName());
         return compartment;
     }
 
@@ -88,12 +72,8 @@ public class CompartmentAwareViewResolver implements ViewResolver {
         return compartment == NO_COMPARTMENT ? viewName : '/' + compartment + viewName;
     }
 
-    public void setGrailsApplication(GrailsApplication grailsApplication) {
-        this.grailsApplication = grailsApplication;
-    }
-
     public void setOriginalViewResolver(ViewResolver originalViewResolver) {
         this.originalViewResolver = originalViewResolver;
     }
-
+    
 }
