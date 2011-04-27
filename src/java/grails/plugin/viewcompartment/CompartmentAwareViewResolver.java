@@ -3,8 +3,8 @@ package grails.plugin.viewcompartment;
 import groovy.lang.GroovyObject;
 
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,7 +28,7 @@ public class CompartmentAwareViewResolver implements ViewResolver {
     public static final String COMPARTMENT = "compartment";
     public static final String NO_COMPARTMENT = "__no_compartment"; // ConcurrentHashMap dosen't like null
 
-    private Map<GroovyObject, String> controllerCompartmentCache = new ConcurrentHashMap<GroovyObject, String>();
+    private ConcurrentMap<String, String> controllerCompartmentCache = new ConcurrentHashMap<String, String>();
 
     private ViewResolver originalViewResolver;
 
@@ -54,11 +54,12 @@ public class CompartmentAwareViewResolver implements ViewResolver {
 
     protected String getAndUpdateCompartmentFromCache(GroovyObject controller) {
         String compartment = NO_COMPARTMENT;
-        if (controllerCompartmentCache.containsKey(controller)) {
+        String key = controller.getClass().getName();
+        if (controllerCompartmentCache.containsKey(key)) {
             compartment = controllerCompartmentCache.get(controller);
         } else {
             compartment = getCompartmentFromController(controller);
-            controllerCompartmentCache.put(controller, compartment);
+            controllerCompartmentCache.put(key, compartment);
         }
 
         return compartment;
