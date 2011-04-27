@@ -39,6 +39,11 @@ public class CompartmentAwareViewResolver implements ViewResolver {
         
         return originalViewResolver.resolveViewName(resolvedViewName, locale);
     }
+    
+    public void cleanCompartmentCache() {
+        log.debug("Clearing compartment cache");
+        controllerCompartmentCache.clear();
+    }
 
     protected String getCompartment(String viewName) {
         GrailsWebRequest webRequest = WebUtils.retrieveGrailsWebRequest();
